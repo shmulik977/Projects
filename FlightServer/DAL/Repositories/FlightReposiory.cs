@@ -14,79 +14,19 @@ namespace FlightServer.DAL.Repositories
         public FlightReposiory()
         {
             this.flightContext = new FlightContext();
-            if (flightContext.StatusStation.Count() == 0)
+            if (!flightContext.StatusStation.Any())
             {
-                flightContext.StatusStation.Add(new StatusStation
-                {
-                    Id = 1,
-                    OptionalFlightStation = "",
-                    OptionalLandingStation = "2",
-                    Status = false
-                });
-                flightContext.StatusStation.Add(new StatusStation
-                {
-                    Id = 2,
-                    OptionalFlightStation = "",
-                    OptionalLandingStation = "3",
-                    Status = false
-                });
-                flightContext.StatusStation.Add(new StatusStation
-                {
-                    Id = 3,
-                    OptionalFlightStation = "",
-                    OptionalLandingStation = "4",
-                    Status = false
-                });
-                flightContext.StatusStation.Add(new StatusStation
-                {
-                    Id = 4,
-                    OptionalFlightStation = "9",
-                    OptionalLandingStation = "5",
-                    Status = false
-                });
-                flightContext.StatusStation.Add(new StatusStation
-                {
-                    Id = 5,
-                    OptionalFlightStation = "",
-                    OptionalLandingStation = "6,7",
-                    Status = false
-                });
-                flightContext.StatusStation.Add(new StatusStation
-                {
-                    Id = 6,
-                    OptionalFlightStation = "8",
-                    OptionalLandingStation = "10",
-                    Status = false
-                });
-                flightContext.StatusStation.Add(new StatusStation
-                {
-                    Id = 7,
-                    OptionalFlightStation = "8",
-                    OptionalLandingStation = "10"
-                });
-                flightContext.StatusStation.Add(new StatusStation
-                {
-                    Id = 8,
-                    OptionalFlightStation = "4",
-                    OptionalLandingStation = "",
-                    Status = false
-                });
-                //In The Air
-                flightContext.StatusStation.Add(new StatusStation
-                {
-                    Id = 9,
-                    OptionalFlightStation = "",
-                    OptionalLandingStation = "1",
-                    Status = false
-                });
-                //In The AirPort
-                flightContext.StatusStation.Add(new StatusStation
-                {
-                    Id = 10,
-                    OptionalFlightStation = "6,7",
-                    OptionalLandingStation = "",
-                    Status = false
-                });
+                flightContext.StatusStation.Add(CreateStatusStation(1, "", "2"));
+                flightContext.StatusStation.Add(CreateStatusStation(2, "", "3"));
+                flightContext.StatusStation.Add(CreateStatusStation(3, "", "4"));
+                flightContext.StatusStation.Add(CreateStatusStation(4, "9", "5"));
+                flightContext.StatusStation.Add(CreateStatusStation(5, "", "6,7"));
+                flightContext.StatusStation.Add(CreateStatusStation(6, "8", "10"));
+                flightContext.StatusStation.Add(CreateStatusStation(7, "8", "10"));
+                flightContext.StatusStation.Add(CreateStatusStation(8, "4", ""));
+                flightContext.StatusStation.Add(CreateStatusStation(9, "", "1"));
+                flightContext.StatusStation.Add(CreateStatusStation(10, "6,7", ""));
+              
                 flightContext.SaveChangesAsync();
             }
         }
@@ -106,11 +46,11 @@ namespace FlightServer.DAL.Repositories
 
         public async Task<Flight> CreateFlight()
         {
-            var x = new Flight();
-            x.CurrentStationId = 10;
-            flightContext.Flights.Add(x);
+            var flight = new Flight();
+            flight.CurrentStationId = 10;
+            flightContext.Flights.Add(flight);
             await flightContext.SaveChangesAsync();
-            return x;
+            return flight;
         }
 
         public bool CreatePlannedLanding(PlannedLanding plannedLanding, out IPlanned planned)
@@ -124,103 +64,13 @@ namespace FlightServer.DAL.Repositories
         public bool CheckIfStationEmpty(IPlanned planned, out IPlanned updatePlaned)
         {
             StatusStation myStation = FindStation(planned.SourceStationId);
-            StatusStation destinationStation =  ChangeDestinationStation(planned, myStation);
+            StatusStation destinationStation = ChangeDestinationStation(planned, myStation);
             if (destinationStation == null || destinationStation.Status == true)//no place            
             {
                 destinationStation = myStation;
                 destinationStation.FlightId = planned.FlightId;
             }
             return MoveStation(planned, out updatePlaned, destinationStation);
-        }
-
-
-        private  StatusStation FindStation(int stationId)
-        {
-            var x = flightContext.StatusStation.Find(stationId);
-            return x;
-        }
-
-        public StatusStation ChangeDestinationStation(IPlanned planned, StatusStation myStation)
-        {
-            if (planned is PlannedFlights)
-            {
-                foreach (var stationId in myStation.OptionalFlightStation.Split(","))
-                {
-                    var item = flightContext.StatusStation.FirstOrDefault(nextStation => nextStation.Id != myStation.Id &&
-                    nextStation.Id == int.Parse(stationId) && nextStation.Status == false);
-                    if (item != null)
-                        return item;
-                }
-            }
-            else if (planned is PlannedLanding)
-            {
-                foreach (var stationId in myStation.OptionalLandingStation.Split(","))
-                {
-                    var item = flightContext.StatusStation.FirstOrDefault(nextStation => nextStation.Id != myStation.Id &&
-                    nextStation.Id == int.Parse(stationId) && nextStation.Status == false);
-                    if (item != null)
-                        return item;
-                }
-            }
-            return null;
-        }
-
-
-        private bool MoveStation(IPlanned planned, out IPlanned updatePlaned, StatusStation destinationStation)
-        {
-            var history = flightContext.FlightHistory.FirstOrDefault(x => x.FlightId == planned.FlightId && x.StationId == planned.SourceStationId);
-            if (history == null)
-            {
-                flightContext.FlightHistory.Add(new FlightHistory()
-                {
-                    FlightId = planned.FlightId,
-                    EntringTime = DateTime.Now,
-                    StationId = destinationStation.Id,
-                });
-            }
-            else
-            {
-                history.ExitTime = DateTime.Now;
-                flightContext.FlightHistory.Update(history);
-                flightContext.FlightHistory.Add(new FlightHistory()
-                {
-                    FlightId = planned.FlightId,
-                    EntringTime = DateTime.Now,
-                    StationId = destinationStation.Id,
-                });
-
-            }
-            flightContext.SaveChangesAsync();
-            if (destinationStation.Id > 8)
-            {
-                //end or start flight
-                planned.StatusStationSource.Status = false;
-                planned.StatusStationSource.FlightId = null;
-                if (planned is PlannedFlights)
-                    flightContext.PlannedFlights.Update((PlannedFlights)planned);
-                else
-                    flightContext.PlannedLanding.Update((PlannedLanding)planned);
-                flightContext.SaveChangesAsync();
-                updatePlaned = null;
-                return true;
-            }
-            var sourceStation = FindStation(planned.SourceStationId);
-            planned.StatusStationSource = destinationStation;
-            planned.SourceStationId = destinationStation.Id;
-            planned.DestinationStationId = destinationStation.Id.ToString();
-            sourceStation.Status = false;
-            destinationStation.FlightId = planned.FlightId;
-            sourceStation.FlightId = null;
-            destinationStation.Status = true;
-            flightContext.StatusStation.Update(sourceStation);
-            flightContext.StatusStation.Update(destinationStation);
-            if (planned is PlannedFlights)
-                flightContext.PlannedFlights.Update((PlannedFlights)planned);
-            else
-                flightContext.PlannedLanding.Update((PlannedLanding)planned);
-            updatePlaned = planned;
-            flightContext.SaveChangesAsync();
-            return false;
         }
 
         public async Task<IList<FlightHistory>> GetAllFlightsHistory()
@@ -236,6 +86,111 @@ namespace FlightServer.DAL.Repositories
         public async Task<IList<PlannedLanding>> GetAllPlannedLandings()
         {
             return flightContext.PlannedLanding.ToList();
+        }
+
+        public StatusStation ChangeDestinationStation(IPlanned planned, StatusStation myStation)
+        {
+            if (planned is PlannedFlights)
+            {
+                foreach (var stationId in myStation.OptionalFlightStation.Split(","))
+                {
+                    var statusStation = GetStatusStation(myStation, stationId);
+                    if (statusStation != null)
+                        return statusStation;
+                }
+            }
+            else if (planned is PlannedLanding)
+            {
+                foreach (var stationId in myStation.OptionalLandingStation.Split(","))
+                {
+                    var statusStation = GetStatusStation(myStation, stationId);
+                    if (statusStation != null)
+                        return statusStation;
+                }
+            }
+            return null;
+        }
+
+        private StatusStation CreateStatusStation(int id, string flightStation, string landingStation)
+        {
+            return new StatusStation
+            {
+                Id = id,
+                OptionalFlightStation = flightStation,
+                OptionalLandingStation = landingStation,
+                Status = false
+            };
+        }
+
+        private StatusStation FindStation(int stationId)
+        {
+            var statusStation = flightContext.StatusStation.Find(stationId);
+            return statusStation;
+        }
+
+        private StatusStation GetStatusStation(StatusStation myStation, string stationId)
+        {
+            return flightContext.StatusStation.FirstOrDefault(nextStation => nextStation.Id != myStation.Id &&
+                    nextStation.Id == int.Parse(stationId) && nextStation.Status == false);
+        }
+
+        private bool MoveStation(IPlanned planned, out IPlanned updatePlaned, StatusStation destinationStation)
+        {
+            var history = flightContext.FlightHistory.FirstOrDefault(x => x.FlightId == planned.FlightId && x.StationId == planned.SourceStationId);
+            if (history == null)
+                flightContext.FlightHistory.Add(CreateFlightHistory(planned, destinationStation.Id));
+            else
+            {
+                history.ExitTime = DateTime.Now;
+                flightContext.FlightHistory.Update(history);
+                flightContext.FlightHistory.Add((CreateFlightHistory(planned, destinationStation.Id)));
+            }
+            flightContext.SaveChangesAsync();
+            if (destinationStation.Id > 8)
+            {
+                planned.StatusStationSource.Status = false;
+                planned.StatusStationSource.FlightId = null;
+                UpdatePlannedFlight(planned);
+                flightContext.SaveChangesAsync();
+                updatePlaned = null;
+                return true;
+            }
+            UpdateFlightData(planned, destinationStation);
+            UpdatePlannedFlight(planned);
+            updatePlaned = planned;
+            flightContext.SaveChangesAsync();
+            return false;
+        }
+        private void UpdateFlightData(IPlanned planned, StatusStation destinationStation)
+        {
+            var sourceStation = FindStation(planned.SourceStationId);
+            planned.StatusStationSource = destinationStation;
+            planned.SourceStationId = destinationStation.Id;
+            planned.DestinationStationId = destinationStation.Id.ToString();
+            sourceStation.Status = false;
+            destinationStation.FlightId = planned.FlightId;
+            sourceStation.FlightId = null;
+            destinationStation.Status = true;
+            flightContext.StatusStation.Remove(sourceStation);
+            flightContext.StatusStation.Add(sourceStation);
+        }
+
+        private void UpdatePlannedFlight(IPlanned planned)
+        {
+            if (planned is PlannedFlights)
+                flightContext.PlannedFlights.Update((PlannedFlights)planned);
+            else
+                flightContext.PlannedLanding.Update((PlannedLanding)planned);
+        }
+
+        private FlightHistory CreateFlightHistory(IPlanned planned, int id)
+        {
+            return new FlightHistory()
+            {
+                FlightId = planned.FlightId,
+                EntringTime = DateTime.Now,
+                StationId = id,
+            };
         }
     }
 }
