@@ -1,0 +1,129 @@
+﻿<Page
+    x:Class="Simulator.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    DataContext="{Binding Source={StaticResource Locator},Path=Main}">
+    <Viewbox>
+        <Grid>
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal" Grid.Column="7" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Width="187" Height="177">
+                    <StackPanel>
+                        <TextBlock Text="NUM: "></TextBlock>
+                        <TextBlock Text="flight: "></TextBlock>
+                        <TextBlock Text="Status: "></TextBlock>
+                    </StackPanel>
+                    <StackPanel>
+                        <TextBlock Text="{Binding Stations[0].Id,Mode=TwoWay}"></TextBlock>
+                        <TextBlock Text="{Binding Stations[0].FlightId}"></TextBlock>
+                        <TextBlock Text="{Binding Stations[0].Status}"></TextBlock>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Column="5" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Width="187" Height="177">
+                    <StackPanel>
+                        <TextBlock Text="NUM: "></TextBlock>
+                        <TextBlock Text="flight: "></TextBlock>
+                        <TextBlock Text="Status: "></TextBlock>
+                    </StackPanel>
+                    <StackPanel>
+                        <TextBlock Text="{Binding Stations[1].Id}"></TextBlock>
+                        <TextBlock Text="{Binding Stations[1].FlightId}"></TextBlock>
+                        <TextBlock Text="{Binding Stations[1].Status}"></TextBlock>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Column="3" Grid.Row="1" HorizontalAlignment="Left" Width="187" Height="177" VerticalAlignment="Top">
+                    <StackPanel>
+                        <TextBlock Text="NUM: "></TextBlock>
+                        <TextBlock Text="flight: "></TextBlock>
+                        <TextBlock Text="Status: "></TextBlock>
+                    </StackPanel>
+                    <StackPanel>
+                        <TextBlock Text="{Binding Stations[2].Id}"></TextBlock>
+                        <TextBlock Text="{Binding Stations[2].FlightId}"></TextBlock>
+                        <TextBlock Text="{Binding Stations[2].Status}"></TextBlock>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" Width="187" Height="177" VerticalAlignment="Top">
+                    <StackPanel>
+                        <TextBlock Text="NUM: "></TextBlock>
+                        <TextBlock Text="flight: "></TextBlock>
+                        <TextBlock Text="Status: "></TextBlock>
+                    </StackPanel>
+                    <StackPanel>
+                        <TextBlock Text="{Binding Stations[3].Id}"></TextBlock>
+                        <TextBlock Text="{Binding Stations[3].FlightId}"></TextBlock>
+                        <TextBlock Text="{Binding Stations[3].Status}"></TextBlock>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Top" Width="187" Height="177">
+                    <StackPanel>
+                        <TextBlock Text="NUM: "></TextBlock>
+                        <TextBlock Text="flight: "></TextBlock>
+                        <TextBlock Text="Status: "></TextBlock>
+                    </StackPanel>
+                    <StackPanel>
+                        <TextBlock Text="{Binding Stations[4].Id}"></TextBlock>
+                        <TextBlock Text="{Binding Stations[4].FlightId}"></TextBlock>
+                        <TextBlock Text="{Binding Stations[4].Status}"></TextBlock>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Column="2" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Top" Width="187" Height="177">
+                    <StackPanel>
+                        <TextBlock Text="NUM: "></TextBlock>
+                        <TextBlock Text="flight: "></TextBlock>
+                        <TextBlock Text="Status: "></TextBlock>
+                    </StackPanel>
+                    <StackPanel>
+                        <TextBlock Text="{Binding Stations[7].Id}"></TextBlock>
+                        <TextBlock Text="{Binding Stations[7].FlightId}"></TextBlock>
+                        <TextBlock Text="{Binding Stations[7].Status}"></TextBlock>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Top" Width="187" Height="177">
+                    <StackPanel>
+                        <TextBlock Text="NUM: "></TextBlock>
+                        <TextBlock Text="flight: "></TextBlock>
+                        <TextBlock Text="Status: "></TextBlock>
+                    </StackPanel>
+                    <StackPanel>
+                        <TextBlock Text="{Binding Stations[5].Id}"></TextBlock>
+                        <TextBlock Text="{Binding Stations[5].FlightId}"></TextBlock>
+                        <TextBlock Text="{Binding Stations[5].Status}"></TextBlock>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Column="3" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Top" Width="187" Height="177">
+                    <StackPanel>
+                        <TextBlock Text="NUM: "></TextBlock>
+                        <TextBlock Text="flight: "></TextBlock>
+                        <TextBlock Text="Status: "></TextBlock>
+                    </StackPanel>
+                    <StackPanel>
+                        <TextBlock Text="{Binding Stations[6].Id}"></TextBlock>
+                        <TextBlock Text="{Binding Stations[6].FlightId}"></TextBlock>
+                        <TextBlock Text="{Binding Stations[6].Status}"></TextBlock>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Viewbox>
+</Page>
